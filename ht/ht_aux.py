@@ -79,7 +79,9 @@ def histogram(hits, min_a, max_a, bin_size):
 	r = list(range(min_a, max_a, bin_size))
 	brackets = list(zip(r[0:-1], r[1:]))
 
-	return {n:[z for z in hits if z.c_get_imag() >= brackets[n][0] and z.c_get_imag() < brackets[n][1]] for n in range(len(brackets))}
+	res = {n:[z for z in hits if z.c_get_imag() >= n[0] and z.c_get_imag() < n[1]] for n in brackets}
+
+	return {k:v for k,v in res.items() if len(v) > 0}
 
 
 def histogram_n(hits, min_a, max_a, bin_size):

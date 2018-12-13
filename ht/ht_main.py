@@ -25,7 +25,7 @@ if __name__ == "__main__":
         solutions = {}
 
         print("JSON number " + str(i))
-        ht_solver = ht_solver(angle_hist = htp.prueba_1(100))
+        ht_solver = ht_solver()
         solutions["ht"] = ht_solver.solve(event)
 
         vl.validate_print([json_data], [solutions["ht"]])
