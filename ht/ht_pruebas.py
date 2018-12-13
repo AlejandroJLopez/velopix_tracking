@@ -46,6 +46,7 @@ def prueba_1(n = 5000, eta = 6, bins = 100):
 	# plt.ylabel("n_hits")
 	# plt.xlabel("pseudorapidity")
 	# plt.show()
+	print((hist, bin_edges))
 	return (hist, bin_edges)
 
 def prueba_2(n = 5000, eta = 6, bins = 100):
@@ -87,6 +88,18 @@ def prueba_2(n = 5000, eta = 6, bins = 100):
 	
 
 	return (hist, bin_edges)
+
+
+
+def prueba_3(n = 100):
+	"Calcula el centroide"
+	pass
+
+def prueba_4(n = 100):
+	"pinta densidad de centros"
+
+	j = 0
+
 
 
 if __name__ == "__main__":

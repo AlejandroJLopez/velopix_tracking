@@ -1,9 +1,6 @@
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import os, sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from event_model import *
 import json
 import math as m
@@ -35,6 +32,8 @@ class ht_solver:
 		# 	l_hits[n] = [x for x in l_hits[n] if x not in hits]
 		# 	print("DESPUES: " + str(len(l_hits[n])))
 
+	def recta_punto_offset():
+ 
 		return None
 
 	def solve(self, event):

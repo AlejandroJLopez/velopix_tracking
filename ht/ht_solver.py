@@ -37,9 +37,7 @@ class ht_solver:
 		theta_pos = list(map(lambda x: 2 * m.atan(m.exp(-x)), pos))
 		#theta_neg = list(map(lambda x: 2 * m.atan(m.exp(-x)), neg))
 
-
-
-		return None
+		return list([m.pi/300]*300)
 
 	def new_track(self, hits, total_hits):
 		t = track([])
@@ -95,53 +93,15 @@ class ht_solver:
 
 
 
-
-
-
 				#####################
 				for k in angulo:
 					#rotar
 					(h.c_rotate(k) for h in h_bin_rotated if h not in used_hits)
 					#histograma
 					hist = histogram(h_bin_rotated, -50, 750, self.bin_size)
+					print(hist)
 					#print(hist)
 
 					tracks
-
-
-				# for k in range(int((self.n_rotations + 1))):
-
-				# 	#rotation angle
-
-				# 	angle = m.fmod((m.pi/self.n_rotations), 2*m.pi)
-
-				# 	#rotate
-				# 	(h.c_rotate(angle) for h in h_bin_rotated if h not in used_hits)
-
-
-
-				# 	#histogram
-
-				# 	hist = histogram(h_bin_rotated, -50, 750, self.bin_size)
-
-				# 	#tracks
-
-				# 	for n1,b in hist.items():
-				# 		if (len(b) >= self.threshold):
-				# 			if self.compatible(b):
-				# 				n_track = self.new_track(b, hits_ht)
-				# 				tracks.append(n_track)
-				# 				used_hits += n_track.hits
-				# 				h_bin_rotated = [x for x in h_bin_rotated if x not in used_hits]
-				# 			else:
-				# 				pass
-
-							#self.filtra_datos(b, [classified_hits[n], h_bin_rotated])
-
-				#print("tracks encontrados para bin "+ str(n)+ ": " + str(len(tracks)))
-				#print("hits restantes: " +str(len(h_bin_rotated)))
-	
-
 		 			
-
 		return tracks
