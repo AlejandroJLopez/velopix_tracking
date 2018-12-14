@@ -98,7 +98,6 @@ class ht_solver:
 		bins = list(zip(phi_bin[:-1], phi_bin[1:]))
 
 		classified_hits = [[x for x in hits_ht if x.phi >= a[0] and x.phi <= a[1]] for a in bins]
-
 		for t in reversed(range(3, self.threshold+1)):
 			#print("umbral: " + str(t))
 			for n in range(self.nbins):
@@ -115,5 +114,6 @@ class ht_solver:
 						if (len(v) >= t):
 							tracks.append(self.new_track(v, h_bin_rotated))
 							h_bin_rotated = list(filter(lambda x: x not in tracks[-1], h_bin_rotated))
+							used_hits += v
 		 			
 		return tracks
