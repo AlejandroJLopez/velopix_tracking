@@ -110,6 +110,7 @@ class ht_solver:
 					(h.c_rotate(k) for h in h_bin_rotated)
 					#histograma
 					hist = histogram(h_bin_rotated, -50, 750, self.bin_size)
+					print(hist)
 					for k,v in hist.items():
 						if (len(v) >= t):
 							tracks.append(self.new_track(v, h_bin_rotated))

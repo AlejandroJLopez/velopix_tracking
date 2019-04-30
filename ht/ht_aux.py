@@ -4,21 +4,49 @@ from event_model import *
 import cmath as cm
 import math as m
 
+class accumulator():
+	def __init__(self, theta_max, theta_min, n_rotations, rho = None, angles = None):
+		self.theta_max = theta_max
+		self.theta_min = theta_min
+	
+		self.angles = list(map(lambda x: m.radians(x),list(range(-self.theta_min, self.theta_max))))
+
+
+		if not rho:
+			self.rho = list(range(-750,750))
+			self.acc = [[0 for x in range(len(self.angles)+1)] for y in range(len(self.rho))]
+
+	def theta_to_x(self, a):
+		r = 0
+		for i in range(len(self.angles)):
+			if a >= self.angles[i]: r = i
+		return r
+
+	def rho_to_y(self, a):
+		r = 0
+		for i in range(len(self.rho)):
+			if a >= self.rho[i]: r = i
+		return r
+
+	def get_angles(self):
+		return list(self.angles)
+
+	def inc(self, x,y):
+		print(x,y)
+		self.acc[self.theta_to_x(x)][self.rho_to_y(y)] += 1
+		return None
+
+	def get_params_list(self, threshold):
+		r = list()
+		for i in range(len(self.angles)+1):
+			for j in range(len(self.rho)):
+				pass
+		return r
 
 class hit_ht(hit):
 	def __init__(self, h):
 		hit.__init__(self, h.x, h.y, h.z, h.id, h.hit_number, h.sensor_number)
 		self.complex_ht = complex(self.z, self.r)
-
-
-	"""
-	def rotate_phi(self, angle):
-		r = self.r
-		phi = self.phi
-		self.x = r * (m.cos(phi+angle))
-		self.y = r * (m.sin(phi+angle))
-
-		return None"""
 
 	def c_rotate(angle):
 		self.complex_ht *= complex(m.cos(angle), m.sin(angle))
@@ -33,7 +61,6 @@ class hit_ht(hit):
 	def c_ht_reset(self):
 		self.complex_ht = complex(self.z, self.r)
 		return None
-
 
 	def __getattr__(self, name):
 		if name == 'phi':
@@ -50,14 +77,12 @@ class hit_ht(hit):
 def rotation(vble, angle):
 	return None
 
-
 def rotate_theta(hit, angle):
 
 	return None
 
 def rotate_eta():
 	return None
-
 
 def rotate(z, angle):
 	return z * complex(m.cos(angle), m.sin(angle))
@@ -72,7 +97,6 @@ def argand(a):
     plt.ylabel('Imaginary')
     plt.xlabel('Real')
     plt.show()
-
 
 def histogram(hits, min_a, max_a, bin_size):
 
@@ -91,7 +115,6 @@ def histogram_n(hits, min_a, max_a, bin_size):
 
 
 	return {tuple(brackets[n]):0 for n in range(len(brackets))}
-
 
 		# testing 1
 
