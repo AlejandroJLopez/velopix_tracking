@@ -4,17 +4,17 @@ from event_model import *
 import cmath as cm
 import math as m
 
+
 class accumulator():
 	def __init__(self, theta_max, theta_min, n_rotations, rho = None, angles = None):
 		self.theta_max = theta_max
-		self.theta_min = theta_min
-	
-		self.angles = list(map(lambda x: m.radians(x),list(range(-self.theta_min, self.theta_max))))
-
+		self.theta_min = theta_min	
+		self.angles = list(map(lambda x: m.radians(x),list(range(self.theta_min, self.theta_max))))
 
 		if not rho:
 			self.rho = list(range(-750,750))
-			self.acc = [[0 for x in range(len(self.angles)+1)] for y in range(len(self.rho))]
+			#self.acc = [[(0, []) for x in range(len(self.angles)+1)] for y in range(len(self.rho))]
+			self.acc = [[[0, []] for x in range(len(self.rho))] for y in range(len(self.angles)+1)]
 
 	def theta_to_x(self, a):
 		r = 0
@@ -31,9 +31,12 @@ class accumulator():
 	def get_angles(self):
 		return list(self.angles)
 
-	def inc(self, x,y):
-		print(x,y)
-		self.acc[self.theta_to_x(x)][self.rho_to_y(y)] += 1
+	def inc(self, hit):
+		c = cm.polar(hit.complex)
+		coord_x = self.theta_to_x(c[1])
+		coord_y = self.rho_to_y(c[0])
+		self.acc[coord_x][coord_y][1].append(hit)
+		self.acc[coord_x][coord_y][0] += 1
 		return None
 
 	def get_params_list(self, threshold):
@@ -43,12 +46,28 @@ class accumulator():
 				pass
 		return r
 
+	def get_tracks(self, umbral):
+		l = list()
+		for a in self.acc:
+			for b in a:
+				if b[0] > umbral: 
+					l.append(b[1])
+
+		return l
+
+	def __repr__(self):
+		s = ""
+		for a in self.acc:
+			for b in a:
+				if b[0] > 1: print(b)
+		return s
+
 class hit_ht(hit):
 	def __init__(self, h):
 		hit.__init__(self, h.x, h.y, h.z, h.id, h.hit_number, h.sensor_number)
 		self.complex_ht = complex(self.z, self.r)
 
-	def c_rotate(angle):
+	def c_rotate(self, angle):
 		self.complex_ht *= complex(m.cos(angle), m.sin(angle))
 		return None
 
@@ -67,6 +86,8 @@ class hit_ht(hit):
 			return m.atan2(self.x, self.y)
 		elif name == 'r':
 			return m.sqrt((self.x)**2 + (self.y)**2)
+		elif name == 'complex':
+			return self.complex_ht
 		else:
 			raise  AttributeError(name)
 

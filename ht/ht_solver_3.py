@@ -13,7 +13,7 @@ import numpy as np
 angles = map(lambda x: m.radians(x),list(range(-90,90)))
 
 class ht_solver:
-	def __init__(self, theta_max = 90, theta_min = -90, nbins = 32, n_rotations = 1000, threshold = 10, max_tolerance = (0.4,0.4), bin_size = 4, vble = 0):
+	def __init__(self, theta_max = 90, theta_min = -90, nbins = 32, n_rotations = 300, threshold = 10, max_tolerance = (0.4,0.4), bin_size = 4, vble = 0):
 		self.theta_max = theta_max
 		self.theta_min = theta_min
 		self.nbins = nbins
@@ -34,7 +34,7 @@ class ht_solver:
 		print("HT_solver using theta angle")
 
 		tracks = list()
-		used_hits = list()
+		used_hits = set()
 		hits_ht_total = [hit_ht(x) for x in event.hits]
 		hits_ht = hits_ht_total
 
@@ -51,19 +51,18 @@ class ht_solver:
 			acc = accumulator(self.theta_max, self.theta_min, self.n_rotations) 
 
 			for k in acc.get_angles():
-				print(k)
-				#rotar
-				(h.c_rotate(k) for h in h_bin_rotated)
-				#acumular
-				(acc.inc(h.c_get_imag(), h.c_get_angle()) for h in h_bin_rotated)
+				#rotar y acumular
+				for h in h_bin_rotated:
+					h.c_rotate(k)
+					acc.inc(h)
+			#sacar tracks del acumulador
+			weak_tracks = acc.get_tracks(self.threshold)
+			#posprocesado
+			for a in weak_tracks:
+				if not [x for x in a if x in used_hits]:
+					tracks.append(track(a))
+				used_hits.update(a)
 
-		#sacar tracks del acumulador
-
-		for t in reversed(range(3, self.threshold+1)):
-			r_a = acc.get_params_list(self.threshold)
-			for l in r_a:
-				pass
-
-			pass
+			print("bin: ", n)
 
 		return tracks

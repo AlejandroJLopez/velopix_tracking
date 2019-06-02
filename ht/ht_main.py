@@ -24,5 +24,6 @@ if __name__ == "__main__":
         print("JSON number " + str(i))
         ht_solver = ht_solver()
         solutions["ht"] = ht_solver.solve(event)
+        print("Validacion")
 
         vl.validate_print([json_data], [solutions["ht"]])
