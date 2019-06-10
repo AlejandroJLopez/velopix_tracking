@@ -9,8 +9,8 @@ import validator_lite as vl
 
 if __name__ == "__main__":
 
-    n = 2
-    j = 1
+    n = 19
+    j = 0
 
     #todos los json
 
@@ -22,8 +22,8 @@ if __name__ == "__main__":
         solutions = {}
 
         print("JSON number " + str(i))
-        ht_solver = ht_solver()
-        solutions["ht"] = ht_solver.solve(event)
+        ht_s = ht_solver()
+        solutions["ht"] = ht_s.solve(event)
         print("Validacion")
 
         vl.validate_print([json_data], [solutions["ht"]])

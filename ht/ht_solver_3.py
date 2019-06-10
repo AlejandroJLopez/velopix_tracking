@@ -63,6 +63,6 @@ class ht_solver:
 					tracks.append(track(a))
 				used_hits.update(a)
 
-			print("bin: ", n)
+			#print("bin: ", n)
 
 		return tracks
