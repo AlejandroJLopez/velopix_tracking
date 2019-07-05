@@ -55,14 +55,21 @@ class ht_solver:
 				for h in h_bin_rotated:
 					h.c_rotate(k)
 					acc.inc(h)
-			#sacar tracks del acumulador
-			weak_tracks = acc.get_tracks(self.threshold)
+			#sacar tracks del acumulador pasandole threshold
+			weak_tracks = acc.get_tracks(2)
 			#posprocesado
 			for a in weak_tracks:
-				if not [x for x in a if x in used_hits]:
-					tracks.append(track(a))
+				#print(a)
+				# if not [x for x in a if x in used_hits]:
+				# 	tracks.append(track(a))
+				# else: 
+				# 	#print("usado")
+				# 	pass
+				tracks.append(track(a))
 				used_hits.update(a)
 
-			#print("bin: ", n)
+			print("bin: ", n)
+
+		#print(tracks)
 
 		return tracks

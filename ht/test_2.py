@@ -7,10 +7,11 @@ import ht_pruebas as htp
 
 import validator_lite as vl
 
+
 if __name__ == "__main__":
 
-    n = 5
-    j = 4
+    n = 9
+    j = 8
 
     #todos los json
 
@@ -19,11 +20,11 @@ if __name__ == "__main__":
         json_data = json.loads(f.read())
         event = em.event(json_data)
         f.close()
-        solutions = {}
+        solutions = {"ht":[]}
 
         print("JSON number " + str(i))
-        ht_s = ht_solver()
-        solutions["ht"] = ht_s.solve(event)
+        for h in event.hits: 
+        	solutions["ht"].append(track([h]))
         print("Validacion")
 
         vl.validate_print([json_data], [solutions["ht"]])
