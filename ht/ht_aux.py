@@ -9,15 +9,12 @@ class accumulator():
 	def __init__(self, theta_max, theta_min, n_rotations, rho = None, angles = None):
 		self.theta_max = theta_max
 		self.theta_min = theta_min	
-		if not angles:
-			self.angles = list(map(lambda x: m.radians(x),list(range(self.theta_min, self.theta_max))))
-		else:
-			self.angles = angles
+		self.angles = list(map(lambda x: m.radians(x),list(range(self.theta_min, self.theta_max))))
 
 		if not rho:
 			self.rho = list(range(-750,750))
 			#self.acc = [[(0, []) for x in range(len(self.angles)+1)] for y in range(len(self.rho))]
-			self.acc = [[[0, set()] for x in range(len(self.rho))] for y in range(len(self.angles)+1)]
+			self.acc = [[[0, []] for x in range(len(self.rho))] for y in range(len(self.angles)+1)]
 
 	def theta_to_x(self, a):
 		r = 0
@@ -38,8 +35,7 @@ class accumulator():
 		c = cm.polar(hit.complex)
 		coord_x = self.theta_to_x(c[1])
 		coord_y = self.rho_to_y(c[0])
-
-		self.acc[coord_x][coord_y][1].add(hit)
+		self.acc[coord_x][coord_y][1].append(hit)
 		self.acc[coord_x][coord_y][0] += 1
 		return None
 
@@ -50,12 +46,12 @@ class accumulator():
 				pass
 		return r
 
-	def get_tracks(self, umbral = 2):
+	def get_tracks(self, umbral):
 		l = list()
 		for a in self.acc:
 			for b in a:
 				if b[0] > umbral: 
-					l.append(list(b[1]))
+					l.append(b[1])
 
 		return l
 
@@ -98,6 +94,16 @@ class hit_ht(hit):
 	def __repr__(self):
 		return "#" + str(self.hit_number) + " {" + str(self.r) + ", " + \
 				str(self.phi) + ", " + str(self.z) + "}"
+
+def rotation(vble, angle):
+	return None
+
+def rotate_theta(hit, angle):
+
+	return None
+
+def rotate_eta():
+	return None
 
 def rotate(z, angle):
 	return z * complex(m.cos(angle), m.sin(angle))
