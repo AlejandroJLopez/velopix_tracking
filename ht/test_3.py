@@ -13,9 +13,11 @@ import validator_lite as vl
 
 if __name__ == "__main__":
 
-    n = 5
-    j = 4
+    n = 13
+    j = 12
     t_of_s = "ht"
+    solver = ht_solver()
+
 
     #todos los json
 
@@ -28,11 +30,7 @@ if __name__ == "__main__":
 
         print("JSON number " + str(i))
 
-
-        classical = ht_solver()
-        solutions[t_of_s] = classical.solve(event)
-        # ht_s = ht_solver()
-        # solutions['classical'] = ht_s.solve(event)
+        solutions[t_of_s] = solver.solve(event)
 
         print("Validacion propia")
 
