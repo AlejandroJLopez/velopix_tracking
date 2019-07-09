@@ -5,62 +5,62 @@ import cmath as cm
 import math as m
 
 
-class accumulator():
-	def __init__(self, theta_max, theta_min, n_rotations, rho = None, angles = None):
-		self.theta_max = theta_max
-		self.theta_min = theta_min	
-		self.angles = list(map(lambda x: m.radians(x),list(range(self.theta_min, self.theta_max))))
+# class accumulator():
+# 	def __init__(self, theta_max, theta_min, n_rotations, rho = None, angles = None):
+# 		self.theta_max = theta_max
+# 		self.theta_min = theta_min	
+# 		self.angles = list(map(lambda x: m.radians(x),list(range(self.theta_min, self.theta_max))))
 
-		if not rho:
-			self.rho = list(range(-750,750))
-			#self.acc = [[(0, []) for x in range(len(self.angles)+1)] for y in range(len(self.rho))]
-			self.acc = [[[0, []] for x in range(len(self.rho))] for y in range(len(self.angles)+1)]
+# 		if not rho:
+# 			self.rho = list(range(-750,750))
+# 			#self.acc = [[(0, []) for x in range(len(self.angles)+1)] for y in range(len(self.rho))]
+# 			self.acc = [[[0, []] for x in range(len(self.rho))] for y in range(len(self.angles)+1)]
 
-	def theta_to_x(self, a):
-		r = 0
-		for i in range(len(self.angles)):
-			if a >= self.angles[i]: r = i
-		return r
+# 	def theta_to_x(self, a):
+# 		r = 0
+# 		for i in range(len(self.angles)):
+# 			if a >= self.angles[i]: r = i
+# 		return r
 
-	def rho_to_y(self, a):
-		r = 0
-		for i in range(len(self.rho)):
-			if a >= self.rho[i]: r = i
-		return r
+# 	def rho_to_y(self, a):
+# 		r = 0
+# 		for i in range(len(self.rho)):
+# 			if a >= self.rho[i]: r = i
+# 		return r
 
-	def get_angles(self):
-		return list(self.angles)
+# 	def get_angles(self):
+# 		return list(self.angles)
 
-	def inc(self, hit):
-		c = cm.polar(hit.complex)
-		coord_x = self.theta_to_x(c[1])
-		coord_y = self.rho_to_y(c[0])
-		self.acc[coord_x][coord_y][1].append(hit)
-		self.acc[coord_x][coord_y][0] += 1
-		return None
+# 	def inc(self, hit):
+# 		c = cm.polar(hit.complex)
+# 		coord_x = self.theta_to_x(c[1])
+# 		coord_y = self.rho_to_y(c[0])
+# 		self.acc[coord_x][coord_y][1].append(hit)
+# 		self.acc[coord_x][coord_y][0] += 1
+# 		return None
 
-	def get_params_list(self, threshold):
-		r = list()
-		for i in range(len(self.angles)+1):
-			for j in range(len(self.rho)):
-				pass
-		return r
+# 	def get_params_list(self, threshold):
+# 		r = list()
+# 		for i in range(len(self.angles)+1):
+# 			for j in range(len(self.rho)):
+# 				pass
+# 		return r
 
-	def get_tracks(self, umbral):
-		l = list()
-		for a in self.acc:
-			for b in a:
-				if b[0] > umbral: 
-					l.append(b[1])
+# 	def get_tracks(self, umbral):
+# 		l = list()
+# 		for a in self.acc:
+# 			for b in a:
+# 				if b[0] > umbral: 
+# 					l.append(b[1])
 
-		return l
+# 		return l
 
-	def __repr__(self):
-		s = ""
-		for a in self.acc:
-			for b in a:
-				if b[0] > 1: print(b)
-		return s
+# 	def __repr__(self):
+# 		s = ""
+# 		for a in self.acc:
+# 			for b in a:
+# 				if b[0] > 1: print(b)
+# 		return s
 
 class hit_ht(hit):
 	def __init__(self, h):
