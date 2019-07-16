@@ -9,11 +9,11 @@ import validator_lite as vl
 
 if __name__ == "__main__":
 
-    n = 11
-    j = 10
+    n = 5
+    j = 0
 
     #todos los json
-
+    all_json, all_solutions = [], []
     for i in range(j, n):
         f = open("../velojson/"+str(i)+".json")
         json_data = json.loads(f.read())
@@ -24,6 +24,10 @@ if __name__ == "__main__":
         print("JSON number " + str(i))
         ht_s = ht_solver()
         solutions["ht"] = ht_s.solve(event)
-        print("Validacion")
 
-        vl.validate_print([json_data], [solutions["ht"]])
+        all_json.append(json_data)
+        all_solutions.append(solutions["ht"])
+
+
+    print("Validación")
+    vl.validate_print(all_json, all_solutions)

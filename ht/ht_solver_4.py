@@ -19,14 +19,23 @@ class accumulator(np.ndarray):
 
 
 class ht_solver:
-	def __init__(self, theta_max = 10, theta_min = -10, n_phi_bins = 32, n_rho_bins = 500, n_rotations = 200, threshold = 5, max_tolerance = (0.4,0.4)):
-		self.theta_max = theta_max
+	def __init__(self,
+		theta_min = -10,
+		theta_max = 10,
+		n_rotations = 200, 
+		rho_min = -100,
+		rho_max = 100,
+		n_rho_bins = 500, 
+		n_phi_bins = 32,
+		threshold = 5):
 		self.theta_min = theta_min
-		self.nbins = n_phi_bins
-		self.n_rho_bins = n_rho_bins #no usada en el acumulador, modificar
+		self.theta_max = theta_max
 		self.n_rotations = n_rotations
+		self.rho_min = rho_min
+		self.rho_max = rho_max
+		self.n_rho_bins = n_rho_bins #no usada en el acumulador, modificar
+		self.nbins = n_phi_bins
 		self.threshold = threshold
-		self.max_tolerance = max_tolerance
 
 	def compatible(self, hits):
 		return True
@@ -52,11 +61,11 @@ class ht_solver:
 		rot_angle = (self.theta_max-self.theta_min)/self.n_rotations
 		#rot = cm.rect(1, m.radians(rot_angle))
 		angles = np.deg2rad(np.arange(self.theta_min, self.theta_max, rot_angle))
-		rho = np.arange(-100, 100, 0.1)
+		rho = np.arange(self.rho_min, self.rho_max, (self.rho_max - self.rho_min)/self.n_rho_bins)
 
 		#algoritmo
-		for n in range(31, self.nbins):
-			acc = np.zeros((len(rho)+1, len(angles)+1), dtype=int)
+		for n in range(self.nbins):
+			acc = np.zeros((len(rho), len(angles)), dtype=int)
 			#rotar y acumular
 			for h in classified_hits[n]:
 				#rho_zero, theta_zero = cm.polar(h.complex)
@@ -66,17 +75,25 @@ class ht_solver:
 					#x,y = np.array([cm.polar(xi)[0] for xi in h_bin_rotated]), np.array([xi.imag for xi in h_bin_rotated])
 					x_index = np.digitize(v, rho)
 					y_index = np.digitize(k, angles)
+					if x_index == len(rho): x_index -= 1
+					if y_index == len(angles): y_index -= 1
 					acc[x_index, y_index] += 1
 
 			#sacar tracks del acumulador
 
 			kandidaten = np.argwhere(acc>self.threshold)
-
 			#for e in range(0, len(kandidaten[0])):
-			v = acc[kandidaten]
-			print(v.shape)
-
-
+			for x,y in kandidaten:
+				#print(x,y)
+				r = rho[x]
+				a = angles[y]
+				new_track = list()
+				for h in classified_hits[n]:
+					v = h.z * m.sin(a) + h.r * m.cos(a)
+					if abs(r-v) < 1:
+						new_track.append(h)
+				if(len(new_track) >=3 ):
+					tracks.append(track(new_track))
 
 			# plt.imshow(acc, aspect='auto', interpolation = None, extent = [angles[0], angles[-1], rho[0], rho[-1]], vmin = 0, vmax = 10)
 			# plt.show()
