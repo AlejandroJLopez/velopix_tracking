@@ -82,5 +82,6 @@ class classifier:
 		 		valid +=1
 		 	elif list(filter(lambda x: len(x) >= 3, beans)):
 		 		partial += 1
+		 		
 
 		return (count, partial, valid)
