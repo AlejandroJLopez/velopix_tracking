@@ -16,12 +16,15 @@ import validator_lite as vl
 class new_event():
     def __init__(self, hits):
         self.hits = hits
+    def __iter__(self):
+        return iter(self.hits)
 
 if __name__ == "__main__":
 
     n = 11
     j = 10
     n_bins = 32
+    solutions = []
 
     #todos los json
 
@@ -47,7 +50,11 @@ if __name__ == "__main__":
         			new_hit_list.append(h)
 
         ht_s = ht_solver()
-        solutions["ht"] = ht_s.solve(new_event(new_hit_list))
+        event.hits = new_hit_list
+        solutions = ht_s.solve(event)
+        vl.validate_print(event, solutions)
+
+
 
         
 

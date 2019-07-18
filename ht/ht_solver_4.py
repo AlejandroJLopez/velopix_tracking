@@ -17,7 +17,6 @@ class accumulator(np.ndarray):
 	def __init__(self, thetas, rhos, n_theta_bins, n_rho_bins):
 		pass
 
-
 class ht_solver:
 	def __init__(self,
 		theta_min = -10,
@@ -27,26 +26,31 @@ class ht_solver:
 		rho_max = 100,
 		n_rho_bins = 500, 
 		n_phi_bins = 32,
-		threshold = 5):
+		threshold = 4):
 		self.theta_min = theta_min
 		self.theta_max = theta_max
 		self.n_rotations = n_rotations
 		self.rho_min = rho_min
 		self.rho_max = rho_max
-		self.n_rho_bins = n_rho_bins #no usada en el acumulador, modificar
+		self.n_rho_bins = n_rho_bins
 		self.nbins = n_phi_bins
 		self.threshold = threshold
+		self.__max_slopes = (0.7, 0.7)
+
+	def are_compatible(self, hit_0, hit_1):
+		hit_distance = abs(hit_1[2] - hit_0[2])
+		dxmax = self.__max_slopes[0] * hit_distance
+		dymax = self.__max_slopes[1] * hit_distance
+		return abs(hit_1[0] - hit_0[0]) < dxmax and \
+				abs(hit_1[1] - hit_0[1]) < dymax
 
 	def compatible(self, hits):
-		return True
+		return all([self.are_compatible(x,y) for x,y in list(zip(hits[:-1:], hits[1:]))])
 
 	def new_track(self, hits, total_hits):
 		return track(hits)
 
 	def solve(self, event):
-
-		print("HT_solver using theta angle")
-
 		tracks = list()
 		used_hits = set()
 		hits_ht_total = [hit_ht(x) for x in event.hits]
@@ -59,7 +63,6 @@ class ht_solver:
 
 		#crea angulos y valores para el acumulador
 		rot_angle = (self.theta_max-self.theta_min)/self.n_rotations
-		#rot = cm.rect(1, m.radians(rot_angle))
 		angles = np.deg2rad(np.arange(self.theta_min, self.theta_max, rot_angle))
 		rho = np.arange(self.rho_min, self.rho_max, (self.rho_max - self.rho_min)/self.n_rho_bins)
 
@@ -68,11 +71,8 @@ class ht_solver:
 			acc = np.zeros((len(rho), len(angles)), dtype=int)
 			#rotar y acumular
 			for h in classified_hits[n]:
-				#rho_zero, theta_zero = cm.polar(h.complex)
 				for k in angles:
 					v = h.z * m.sin(k) + h.r * m.cos(k)
-					#v = rho_zero / m.cos(k-theta_zero)
-					#x,y = np.array([cm.polar(xi)[0] for xi in h_bin_rotated]), np.array([xi.imag for xi in h_bin_rotated])
 					x_index = np.digitize(v, rho)
 					y_index = np.digitize(k, angles)
 					if x_index == len(rho): x_index -= 1
@@ -81,10 +81,11 @@ class ht_solver:
 
 			#sacar tracks del acumulador
 
-			kandidaten = np.argwhere(acc>self.threshold)
-			#for e in range(0, len(kandidaten[0])):
-			for x,y in kandidaten:
-				#print(x,y)
+			kandidaten = np.argwhere(acc>=self.threshold)
+
+			k = list(sorted([(x,y) for x,y in kandidaten], key = lambda xy: acc[xy], reverse = True))
+
+			for x,y in k:
 				r = rho[x]
 				a = angles[y]
 				new_track = list()
@@ -92,20 +93,14 @@ class ht_solver:
 					v = h.z * m.sin(a) + h.r * m.cos(a)
 					if abs(r-v) < 1:
 						new_track.append(h)
-				if(len(new_track) >=3 ):
+				if(len(new_track) >3 and all([h1 not in used_hits for h1 in new_track])): #and self.compatible(new_track)
 					tracks.append(track(new_track))
+					used_hits.update(new_track)
 
 			# plt.imshow(acc, aspect='auto', interpolation = None, extent = [angles[0], angles[-1], rho[0], rho[-1]], vmin = 0, vmax = 10)
 			# plt.show()
 
-			# if n == 12: 
-			# 	np.savetxt("acumulador_"+str(n)+".csv", acc, delimiter=",")
-			# weak_tracks = (np.argwhere(acc >= self.threshold))
+			print(".", end="", flush= True)
 
-			# for w in weak_tracks:
-			# 	r = rho[w[0]]
-			# 	a = angles[w[1]]
-
-			print("bin: ", n)
-
+		print("")
 		return tracks

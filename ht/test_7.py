@@ -1,6 +1,7 @@
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from ht_solver import *
+from classical_solver import *
 from ht_solver_4 import ht_solver
 import event_model as em
 import ht_pruebas as htp
@@ -9,7 +10,7 @@ import validator_lite as vl
 
 if __name__ == "__main__":
 
-    n = 12
+    n = 100
     j = 0
 
     #todos los json
@@ -22,7 +23,7 @@ if __name__ == "__main__":
         solutions = {}
 
         print("JSON number " + str(i))
-        ht_s = ht_solver()
+        ht_s = classical_solver()
         solutions["ht"] = ht_s.solve(event)
 
         all_json.append(json_data)
