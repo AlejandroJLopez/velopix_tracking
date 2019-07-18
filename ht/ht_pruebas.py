@@ -1,3 +1,5 @@
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from ht_solver import *
 import event_model as em
 import math as m
@@ -63,7 +65,7 @@ def prueba_2(n = 5000, eta = 6, bins = 100):
 	for i in range(j,n):
 
 		#open file
-		f = open("velojson_5k/"+str(i)+".json")
+		f = open("../velojson_5k/"+str(i)+".json")
 		json_data = json.loads(f.read())
 		event = em.event(json_data)
 		f.close()
