@@ -38,11 +38,12 @@ class ht_solver:
 		self.__max_slopes = (0.7, 0.7)
 
 	def are_compatible(self, hit_0, hit_1):
-		hit_distance = abs(hit_1[2] - hit_0[2])
-		dxmax = self.__max_slopes[0] * hit_distance
-		dymax = self.__max_slopes[1] * hit_distance
-		return abs(hit_1[0] - hit_0[0]) < dxmax and \
-				abs(hit_1[1] - hit_0[1]) < dymax
+		return True
+		# hit_distance = abs(hit_1[2] - hit_0[2])
+		# dxmax = self.__max_slopes[0] * hit_distance
+		# dymax = self.__max_slopes[1] * hit_distance
+		# return abs(hit_1[0] - hit_0[0]) < dxmax and \
+		# 		abs(hit_1[1] - hit_0[1]) < dymax
 
 	def compatible(self, hits):
 		return all([self.are_compatible(x,y) for x,y in list(zip(hits[:-1:], hits[1:]))])
@@ -93,7 +94,7 @@ class ht_solver:
 					v = h.z * m.sin(a) + h.r * m.cos(a)
 					if abs(r-v) < 1:
 						new_track.append(h)
-				if(len(new_track) >3 and all([h1 not in used_hits for h1 in new_track])): #and self.compatible(new_track)
+				if(len(new_track) >=3 and all([h1 not in used_hits for h1 in new_track]) and self.compatible(new_track)):
 					tracks.append(track(new_track))
 					used_hits.update(new_track)
 
