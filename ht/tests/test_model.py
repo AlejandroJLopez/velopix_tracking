@@ -8,6 +8,7 @@ import ht_pruebas as htp
 import math as m
 import validator_lite as vl
 
+
 class Test:
 	"""Clase genérica para representar los diferentes tests del proyecto
 	"""
@@ -25,4 +26,6 @@ class Test:
 		return events
 
 	def run(self):
+		pass
+	def graphs(self):
 		pass

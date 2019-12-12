@@ -17,6 +17,53 @@ class accumulator(np.ndarray):
 	def __init__(self, thetas, rhos, n_theta_bins, n_rho_bins):
 		pass
 
+class p_process():
+
+	@staticmethod
+	def clean(hit_list):
+		""""""
+		track_list = list(filter(lambda x: len(x) > 0, hit_list))
+		new_track_list = []
+
+		while (track_list):
+			t = track_list[0]
+			x = np.array([h.z for h in t])
+			y = np.array([h.r for h in t])
+			z = np.polyfit(x,y,1, full = True)
+
+			if z[1] and z[1]/len(t) >=(0.005):
+				track_list.pop(0)
+			else:
+				new_t = track_list.pop(0)
+
+				new_track_list.append(new_t)
+		return new_track_list
+
+	@staticmethod
+	def split(hits):
+		track = list(sorted(hits, key = lambda x: x.sensor_number))
+		new_tracks = []
+
+		i = 0
+		for n,h in enumerate(track):
+			if n>0 and h.sensor_number - track[n-1].sensor_number > 4:
+				new_tracks.append(hits[i:n])
+				i = n
+		new_tracks.append(hits[i:])
+		return new_tracks
+
+	@staticmethod
+	def compatible(hits):
+		# track = sorted(hits, key = lambda x: x.sensor_number)
+
+		# for n,h in enumerate(hits):
+		# 	if n > 0 and abs(h.sensor_number - hits[n-1].sensor_number) > 1:
+		# 		print("sensor distance: ", h.sensor_number - hits[n-1].sensor_number)
+
+		return True
+
+
+
 class ht_solver:
 	def __init__(self,
 		theta_min = -10,
@@ -35,18 +82,15 @@ class ht_solver:
 		self.n_rho_bins = n_rho_bins
 		self.nbins = n_phi_bins
 		self.threshold = threshold
-		self.__max_slopes = (0.7, 0.7)
-
-	def are_compatible(self, hit_0, hit_1):
-		return True
-		# hit_distance = abs(hit_1[2] - hit_0[2])
-		# dxmax = self.__max_slopes[0] * hit_distance
-		# dymax = self.__max_slopes[1] * hit_distance
-		# return abs(hit_1[0] - hit_0[0]) < dxmax and \
-		# 		abs(hit_1[1] - hit_0[1]) < dymax
 
 	def compatible(self, hits):
-		return all([self.are_compatible(x,y) for x,y in list(zip(hits[:-1:], hits[1:]))])
+		# track = sorted(hits, key = lambda x: x.sensor_number)
+
+		# for n,h in enumerate(hits):
+		# 	if n > 0 and abs(h.sensor_number - hits[n-1].sensor_number) > 1:
+		# 		print("sensor distance: ", h.sensor_number - hits[n-1].sensor_number)
+
+		return True
 
 	def new_track(self, hits, total_hits):
 		return track(hits)
@@ -81,7 +125,6 @@ class ht_solver:
 					acc[x_index, y_index] += 1
 
 			#sacar tracks del acumulador
-
 			kandidaten = np.argwhere(acc>=self.threshold)
 
 			k = list(sorted([(x,y) for x,y in kandidaten], key = lambda xy: acc[xy], reverse = True))
@@ -89,17 +132,22 @@ class ht_solver:
 			for x,y in k:
 				r = rho[x]
 				a = angles[y]
-				new_track = list()
+				weak_track = list()
+
 				for h in classified_hits[n]:
 					v = h.z * m.sin(a) + h.r * m.cos(a)
 					if abs(r-v) < 1:
-						new_track.append(h)
-				if(len(new_track) >=3 and all([h1 not in used_hits for h1 in new_track]) and self.compatible(new_track)):
-					tracks.append(track(new_track))
-					used_hits.update(new_track)
+						weak_track.append(h)
+				new_tracks = p_process().split(weak_track)
+				clean_tracks = p_process().clean(new_tracks)
+				for t in clean_tracks:
+					if(len(t) >= self.threshold and all([h1 not in used_hits for h1 in t])):
+						if self.compatible(t):
+							tracks.append(track(t))
+							used_hits.update(t)
 
-			# plt.imshow(acc, aspect='auto', interpolation = None, extent = [angles[0], angles[-1], rho[0], rho[-1]], vmin = 0, vmax = 10)
-			# plt.show()
+			#plt.imshow(acc, aspect='auto', interpolation = None, extent = [angles[0], angles[-1], rho[0], rho[-1]], vmin = 0, vmax = 10)
+			#plt.show()
 
 			print(".", end="", flush= True)
 

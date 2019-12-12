@@ -9,7 +9,7 @@ import validator_lite as vl
 
 if __name__ == "__main__":
 
-    n = 100
+    n = 10
     j = 0
 
     #todos los json

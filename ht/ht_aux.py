@@ -5,62 +5,50 @@ import cmath as cm
 import math as m
 
 
-# class accumulator():
-# 	def __init__(self, theta_max, theta_min, n_rotations, rho = None, angles = None):
-# 		self.theta_max = theta_max
-# 		self.theta_min = theta_min	
-# 		self.angles = list(map(lambda x: m.radians(x),list(range(self.theta_min, self.theta_max))))
+class p_process():
 
-# 		if not rho:
-# 			self.rho = list(range(-750,750))
-# 			#self.acc = [[(0, []) for x in range(len(self.angles)+1)] for y in range(len(self.rho))]
-# 			self.acc = [[[0, []] for x in range(len(self.rho))] for y in range(len(self.angles)+1)]
+	@staticmethod
+	def clean(hit_list):
+		""""""
+		track_list = list(filter(lambda x: len(x) > 0, hit_list))
+		new_track_list = []
 
-# 	def theta_to_x(self, a):
-# 		r = 0
-# 		for i in range(len(self.angles)):
-# 			if a >= self.angles[i]: r = i
-# 		return r
+		while (track_list):
+			t = track_list[0]
+			x = np.array([h.z for h in t])
+			y = np.array([h.r for h in t])
+			z = np.polyfit(x,y,1, full = True)
 
-# 	def rho_to_y(self, a):
-# 		r = 0
-# 		for i in range(len(self.rho)):
-# 			if a >= self.rho[i]: r = i
-# 		return r
+			if z[1] and z[1]/len(t) >=(0.005):
+				track_list.pop(0)
+			else:
+				new_t = track_list.pop(0)
 
-# 	def get_angles(self):
-# 		return list(self.angles)
+				new_track_list.append(new_t)
+		return new_track_list
 
-# 	def inc(self, hit):
-# 		c = cm.polar(hit.complex)
-# 		coord_x = self.theta_to_x(c[1])
-# 		coord_y = self.rho_to_y(c[0])
-# 		self.acc[coord_x][coord_y][1].append(hit)
-# 		self.acc[coord_x][coord_y][0] += 1
-# 		return None
+	@staticmethod
+	def split(hits):
+		track = list(sorted(hits, key = lambda x: x.sensor_number))
+		new_tracks = []
 
-# 	def get_params_list(self, threshold):
-# 		r = list()
-# 		for i in range(len(self.angles)+1):
-# 			for j in range(len(self.rho)):
-# 				pass
-# 		return r
+		i = 0
+		for n,h in enumerate(track):
+			if n>0 and h.sensor_number - track[n-1].sensor_number > 4:
+				new_tracks.append(hits[i:n])
+				i = n
+		new_tracks.append(hits[i:])
+		return new_tracks
 
-# 	def get_tracks(self, umbral):
-# 		l = list()
-# 		for a in self.acc:
-# 			for b in a:
-# 				if b[0] > umbral: 
-# 					l.append(b[1])
+	@staticmethod
+	def compatible(hits):
+		# track = sorted(hits, key = lambda x: x.sensor_number)
 
-# 		return l
+		# for n,h in enumerate(hits):
+		# 	if n > 0 and abs(h.sensor_number - hits[n-1].sensor_number) > 1:
+		# 		print("sensor distance: ", h.sensor_number - hits[n-1].sensor_number)
 
-# 	def __repr__(self):
-# 		s = ""
-# 		for a in self.acc:
-# 			for b in a:
-# 				if b[0] > 1: print(b)
-# 		return s
+		return True
 
 class hit_ht(hit):
 	def __init__(self, h):
@@ -124,7 +112,7 @@ def histogram(hits, min_a, max_a, bin_size):
 	r = list(range(min_a, max_a, bin_size))
 	brackets = list(zip(r[0:-1], r[1:]))
 
-	res = {n:[z for z in hits if z.c_get_imag() >= n[0] and z.c_get_imag() < n[1]] for n in brackets}
+	res = {n:[z for z in hits if z.imag >= n[0] and z.imag < n[1]] for n in brackets}
 
 	return {k:v for k,v in res.items() if len(v) > 0}
 
