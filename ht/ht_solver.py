@@ -36,15 +36,6 @@ class ht_solver:
 		self.nbins = n_phi_bins
 		self.threshold = threshold
 
-	def compatible(self, hits):
-		# track = sorted(hits, key = lambda x: x.sensor_number)
-
-		# for n,h in enumerate(hits):
-		# 	if n > 0 and abs(h.sensor_number - hits[n-1].sensor_number) > 1:
-		# 		print("sensor distance: ", h.sensor_number - hits[n-1].sensor_number)
-
-		return True
-
 	def new_track(self, hits, total_hits):
 		return track(hits)
 
@@ -95,7 +86,7 @@ class ht_solver:
 				clean_tracks = p_process().clean(new_tracks)
 				for t in clean_tracks:
 					if(len(t) >= self.threshold and all([h1 not in used_hits for h1 in t])):
-						if self.compatible(t):
+						if p_process().compatible(t):
 							tracks.append(track(t))
 							used_hits.update(t)
 
